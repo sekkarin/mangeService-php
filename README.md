@@ -1,0 +1,1 @@
+ <!-- FOREIGN KEY (foreign_key_column) REFERENCES referenced_table(id) ON DELETE CASCADE -->

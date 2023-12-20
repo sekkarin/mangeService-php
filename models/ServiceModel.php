@@ -22,6 +22,9 @@ class ServiceModel{
     }
 
     public function registerService($info) {
+        if ($this->isServiceDuplicate($info["UserID"], $info["ServiceID"])) {
+            return false;  // Service already registered
+        }
         $date = date("Y/m/d");
         
         // INSERT INTO `registrations` (`RegistrationID`, `UserID`, `ServiceID`, `RegistrationDate`) VALUES (NULL, '9', '1', '2023-12-21 13:12:41');
@@ -51,6 +54,17 @@ class ServiceModel{
       } else {
           return null;
       }
+    }
+    public function isServiceDuplicate($userId, $service) {
+        $query = "SELECT COUNT(*) FROM registrations WHERE UserID = ? AND `ServiceID` = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(1, $userId);
+        $stmt->bindParam(2, $service);
+        $stmt->execute();
+
+        $count = $stmt->fetchColumn();
+
+        return ($count > 0);
     }
 }
 

@@ -67,11 +67,28 @@ class UserModel {
         $stmt->bindParam(5,$PhoneNumber );
         $stmt->bindParam(6, $Role);
         $stmt->bindParam(7,  $AccountStatus);
-        $success =  $stmt->execute();
-        $stmt->closeCursor();
-
-        // Return success or failure
-        return $success;
+        if ($stmt->execute()) {
+            $userId = $this->db->lastInsertId();
+    
+            $this->createUserPerMission($userId);
+            $stmt->closeCursor();
+            return true;
+        } else {
+            return null;
+        }
+    }
+    public function createUserPerMission($userID) {
+        $rolseId = 1;
+        $query = "INSERT INTO userpermissions (UserPermissionID, UserID, UserRoleID) VALUES (NULL, ?, ?);";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(1, $userID);
+        $stmt->bindParam(2, $rolseId);
+        // $stmt->execute();
+        if ($stmt->execute()) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } else {
+            return null;
+        }
     }
 }
 
